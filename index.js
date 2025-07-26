@@ -37,6 +37,10 @@ async function run() {
       const result=await cuisinecollection.find().limit(6).toArray();
       res.send(result)
     })
+    app.get('/allcuisin',async(req,res)=>{
+      const result=await cuisinecollection.find().toArray();
+      res.send(result)
+    })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
