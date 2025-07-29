@@ -48,6 +48,11 @@ async function run() {
       const result=await cuisinecollection.findOne(query);
       res.send(result)
     })
+    app.post('/allcuisin',async(req,res)=>{
+      const newitem=req.body;
+      const result=await cuisinecollection.insertOne(newitem)
+      res.send(result)
+    })
     //carts
     app.post('/carts',async(req,res)=>{
       const newcart=req.body;
