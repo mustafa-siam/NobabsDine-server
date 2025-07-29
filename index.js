@@ -33,6 +33,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const cuisinecollection=client.db('NobabDine').collection('AllCuisins')
+    const cartcollection=client.db('NobabDine').collection('AllCarts')
     app.get('/topcuisin',async(req,res)=>{
       const result=await cuisinecollection.find().limit(6).toArray();
       res.send(result)
@@ -46,6 +47,24 @@ async function run() {
       const query={_id:new ObjectId(id)}
       const result=await cuisinecollection.findOne(query);
       res.send(result)
+    })
+    //carts
+    app.post('/carts',async(req,res)=>{
+      const newcart=req.body;
+      const result=await cartcollection.insertOne(newcart)
+      res.send(result);
+    })
+    app.get('/carts',async(req,res)=>{
+      const email=req.query.email;
+      const query={email:email}
+      const result=await cartcollection.find(query).toArray();
+      res.send(result);
+    })
+    app.delete('/carts/:id',async(req,res)=>{
+      const id =req.params.id;
+      const query={_id:new ObjectId(id)}
+      const result=await cartcollection.deleteOne(query);
+      res.send(result);
     })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
