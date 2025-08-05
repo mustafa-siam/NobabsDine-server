@@ -37,12 +37,27 @@ async function run() {
         const ordercollection = client.db('NobabDine').collection('orders');
 
         app.get('/topcuisin', async (req, res) => {
-            const result = await cuisinecollection.aggregate([{$sort:{purchase_count:-1}},{$limit:6}]).toArray();
+            const result = await cuisinecollection.find().sort({purchase_count: -1}).limit(6).toArray();
             res.send(result)
         })
         app.get('/allcuisin', async (req, res) => {
-            const result = await cuisinecollection.find().toArray();
-            res.send(result)
+            const search=req.query.search || "";
+            const page=parseInt(req.query.page) || 1;
+            const limit=parseInt(req.query.limit) ||9;
+            const skip=(page-1)*limit;
+            const query=search ?
+            {
+                $or:[
+                    {name:{$regex:search,$options:"i"}},
+                    {category:{$regex:search,$options:'i'}},
+                    {origin:{$regex:search,$options:"i"}}
+                ]
+            }
+            :{};
+            const totalitem=await cuisinecollection.countDocuments(query);
+            const totalpage=Math.ceil(totalitem/limit)
+            const foods = await cuisinecollection.find(query).skip(skip).limit(limit).toArray();
+            res.send({foods,totalpage})
         })
         app.delete('/allcuisin/:id',async(req,res)=>{
             const id=req.params.id;
