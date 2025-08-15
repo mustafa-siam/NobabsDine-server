@@ -12,6 +12,8 @@ const port = process.env.PORT || 5000;
 app.use(cors({
     origin: [
         "http://localhost:5173",
+        "https://nobabdine-c57d9.web.app",
+        "https://nobabdine-c57d9.firebaseapp.com"
     ],
     credentials: true
 }));
@@ -25,6 +27,7 @@ const verifytoken = (req, res, next) => {
     }
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
+            console.log("JWT Verification Error:", err);
             return res.status(401).send({ message: 'unauthorized access' });
         }
         req.user = decoded;
